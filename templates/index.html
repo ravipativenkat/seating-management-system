@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Seating Map{% endblock %}
+{% block content %}
+  <h1>Office Seating Map</h1>
+  <p class="subtitle">Current seat assignments across the office.</p>
+
+  <div class="seat-grid">
+    {% for seat in seats %}
+      <div class="seat-card {{ 'occupied' if seat.employee else 'empty' }}">
+        <div class="seat-label">{{ seat.label }}</div>
+        <div class="seat-floor">{{ seat.floor or "—" }}</div>
+        {% if seat.employee %}
+          <div class="seat-employee">{{ seat.employee.name }}</div>
+          <div class="seat-dept">{{ seat.employee.department or "" }}</div>
+        {% else %}
+          <div class="seat-empty-label">Empty</div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+
+  {% if not seats %}
+    <p>No seats yet. Add some from the <a href="{{ url_for('admin') }}">Admin Panel</a>.</p>
+  {% endif %}
+{% endblock %}

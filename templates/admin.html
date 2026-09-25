@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Admin Panel{% endblock %}
+{% block content %}
+  <h1>Admin Panel</h1>
+
+  <section class="card">
+    <h2>🤖 AI Seating Assistant</h2>
+    <p class="subtitle">Type an instruction, e.g. "Move Sarah Johnson to seat C3" or "Unassign John Smith".</p>
+    <form id="ai-form">
+      <textarea id="ai-prompt" rows="2" placeholder="Type an instruction for the AI assistant..." required></textarea>
+      <button type="submit">Send to AI Assistant</button>
+    </form>
+    <div id="ai-result" class="result-box" style="display:none;"></div>
+  </section>
+
+  <section class="card">
+    <h2>Manual Seat Assignment</h2>
+    <form id="manual-form">
+      <select id="manual-employee" required>
+        <option value="">Select employee...</option>
+        {% for e in employees %}
+          <option value="{{ e.id }}">{{ e.name }}{% if e.department %} ({{ e.department }}){% endif %}</option>
+        {% endfor %}
+      </select>
+      <select id="manual-seat">
+        <option value="">Unassign (no seat)</option>
+        {% for s in seats %}
+          <option value="{{ s.label }}">{{ s.label }}{% if s.employee %} — currently {{ s.employee.name }}{% endif %}</option>
+        {% endfor %}
+      </select>
+      <button type="submit">Apply</button>
+    </form>
+    <div id="manual-result" class="result-box" style="display:none;"></div>
+  </section>
+
+  <div class="two-col">
+    <section class="card">
+      <h2>Add Employee</h2>
+      <form id="add-employee-form">
+        <input type="text" id="emp-name" placeholder="Full name" required>
+        <input type="text" id="emp-dept" placeholder="Department (optional)">
+        <button type="submit">Add Employee</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Add Seat</h2>
+      <form id="add-seat-form">
+        <input type="text" id="seat-label" placeholder="Seat label, e.g. D5" required>
+        <input type="text" id="seat-floor" placeholder="Floor (optional)">
+        <button type="submit">Add Seat</button>
+      </form>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>Recent Activity</h2>
+    <ul class="log-list">
+      {% for log in logs %}
+        <li><strong>{{ log.timestamp.strftime("%Y-%m-%d %H:%M") }}</strong> — {{ log.action }}{% if log.prompt %} <em>(prompt: "{{ log.prompt }}")</em>{% endif %}</li>
+      {% else %}
+        <li>No activity yet.</li>
+      {% endfor %}
+    </ul>
+  </section>
+
+  <script src="{{ url_for('static', filename='admin.js') }}"></script>
+{% endblock %}
